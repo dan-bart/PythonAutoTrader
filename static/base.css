@@ -1,47 +1,9 @@
-/* Enables horizontal scrolling in any element that has the "container" CSS class. */
-
-.container {
-    overflow-x: auto;
-    overflow-y: auto;
-}
-
 body {
     margin: 0;
     padding: 0;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     color: #444;
 }
-
-
-/*
-   * Formatting the header area
-   */
-
-header {
-    background-color: #DFB887;
-    height: 35px;
-    width: 100%;
-    opacity: .9;
-    margin-bottom: 10px;
-}
-
-header h1.logo {
-    margin: 0;
-    font-size: 1.7em;
-    color: #fff;
-    text-transform: uppercase;
-    float: left;
-}
-
-header h1.logo:hover {
-    color: #fff;
-    text-decoration: none;
-}
-
-
-/*
-   * Centering the body content
-   */
 
 .container {
     width: 1200px;
