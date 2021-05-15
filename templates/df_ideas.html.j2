@@ -1,0 +1,29 @@
+{% extends "index.html.j2" %}
+
+
+{% block body %}
+<table id = "example" class = "table table-bordered">
+  <thead>
+    <tr>
+        <th>ticker</th>
+        <th>price</th>
+        <th>type</th>
+        <th>activated</th>  
+    </tr>
+  </thead>
+ </table> 
+
+<script type = "text/javascript">
+$('#example').dataTable({
+   "data": {{ dataframe  }},
+   "columns": [
+      { "data": "ticker" },
+      { "data": "price" }, 
+      { "data": "type" }, 
+      { "data": "activated" }
+
+   ]
+});
+</script>
+
+{% endblock %}

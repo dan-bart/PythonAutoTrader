@@ -1,0 +1,36 @@
+{% extends "index.html.j2" %}
+
+
+{% block body %}
+
+<table id = "example" class = "table table-bordered">
+  <thead>
+    <tr>
+        <th>ticker</th>
+        <th>ammount</th>
+        <th>price</th>
+        <th>date</th>  
+    </tr>
+  </thead>
+ </table> 
+
+<script type = "text/javascript">
+
+$(document).ready(function() {
+ 
+    $('#example').DataTable( {
+   "data": {{ dataframe  }},
+   columnDefs: [
+               {"type":"unix","targets":3,"render": function (data, type, full, meta) {return moment.utc(data, "x").format("DD/MM/YYYY HH:mm:ss");}},
+               ],
+   "columns": [
+      { "data": "ticker" },
+      { "data": "ammount" }, 
+      { "data": "price" }, 
+      {"data" : "date", "type": "date" }
+   ]
+    });
+});
+</script>
+
+{% endblock %}

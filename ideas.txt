@@ -1,0 +1,296 @@
+**BA Support Levels: @here **
+$233, $228
+
+**BA Price Targets**
+$238, $242.70, $246, $252
+
+**Stop out if BA closes BELOW:**
+$222
+
+**BABA Support Levels: @here ** (Updated 5/10/21)
+$226, $222.60, $215.70
+
+**BABA Price Targets**
+$229.40, $238, $245, $252
+
+**Stop out if BABA closes BELOW:**
+$211
+
+**INTC Support Levels: @here  **
+$57.80, $56
+
+**INTC Price Targets**
+$61, $62.25, $64
+
+**Stop out if INTC closes BELOW:**
+$55
+
+**XLE Support Levels: @here** 
+$47.70, $47, $46.60
+
+**XLE Price Targets**
+$49, $50, $51, $55 (long hold)
+
+**Stop out if XLE closes BELOW:**
+$46
+
+**SMH Support Levels: @here** (NOTE: You can leverage this trade by using the SOXL ETF)
+$250.50, $248, $245, $241
+
+**SMH Price Targets**
+$257, $267
+
+**Stop out if SMH closes BELOW:**
+$239
+
+**ZM Support Levels: @here**
+$330, $325, $322
+
+**ZM Price Targets**
+$347, $359, $377
+
+**Stop out if ZM closes BELOW:**
+$315
+
+**RTX Support Levels: @here**
+$77, $75.80
+
+**RTX Price Targets**
+$79, $82, $84
+
+**Stop out if RTX closes BELOW:**
+$74.60
+
+**PINS Support Levels: @here**
+$84, $83.50, $82
+
+**PINS Price Targets**
+$86, $87.50, $90, $96
+
+**Stop out if PINS closes BELOW:**
+$80.5
+
+**DKNG Support Level:** @here (updated on 4/27)
+$57.30, $54.25
+
+**DKNG Price Targets**
+$61, $64, $66
+
+**Stop out if DKNG closes BELOW:**
+$52
+
+**DIS Support Levels: @here**
+$186, $184, $182
+
+**DIS Price Targets**
+$190, $192, $195
+
+**Stop out if DIS closes BELOW:**
+$181
+
+**AMD Support Levels:** @here
+$83, $80, $78, $76
+
+**AMD Price Targets**
+$84, $86, $89
+
+**Stop out if AMD closes BELOW:**
+$74.50
+
+**CRM Support Levels:** @here
+$220, $216
+
+**CRM Price Targets**
+$226, $232, $240
+
+**Stop out if CRM closes BELOW:**
+$214
+
+**ENPH Support Levels** @here
+$149, $142, $136.60
+
+**ENPH Price Targets**
+$162, $167, $179
+
+**Stop out if ENPH closes BELOW**
+$132
+
+**AAPL Support Levels @here**
+$125, $123, $121, $119, $133.50, $135, $137.60
+
+**AAPL Price Targets**
+$125, $127.80, $130, $132.75, $134
+
+**Stop out if AAPL closes BELOW**
+$116
+
+**AMZN Support Levels** @here
+$3133, $3090, $3034, $3307, $3274, $3209
+
+**AMZN Price Targets**
+$3222, $3260, $3370, $3442, $3458, $3573, $3644, $3759
+
+**Stop out if AMZN closes BELOW**
+$2950
+
+**GOOG Support Levels** @here
+$2127, $2090, 2070
+
+**GOOG Price Targets**
+$2152, $2214, $2282
+
+**Stop out if GOOG closes BELOW**
+$2023
+
+**TDOC Support Levels** @here (updated on 4/9/21)
+$175, $168, $162, $159
+
+**TDOC Price Targets**
+$187, $200
+
+**Stop out if TDOC closes BELOW:**
+$156.50
+
+**NIO Support Levels @here** (ROUND 2)
+$35, $32.50, $37, $36.20
+
+**NIO Price Targets**
+$37.50, $40, $41, $42.50, $46, $48
+
+**Stop out if NIO closes BELOW:**
+$31
+
+**MSFT Support Levels** @here
+$237.50, $234, $232
+
+**MSFT Price Targets**
+$241, $245, $249
+
+**Stop out if MSFT closes BELOW**
+$229
+
+**DFEN Support Levels** @here
+$19.60, $18.50, $17.60
+
+**DFEN Price Targets**
+$22, $23.80
+
+**Stop out if DFEN closes BELOW:**
+$17
+
+**U Support Levels @here**
+$100, $95
+
+**U Price Targets**
+$107, $115, $120
+
+**Stop out if U closes BELOW:**
+$92
+
+**FB Support Levels**
+$282, $278, $273
+
+**FB Price Targets**
+$293.75, $295, $304, $307, $302, $297, $313, $324
+
+**Stop out if FB closes BELOW**
+$269
+
+**KO Support Levels: @here**
+$50.80, $50.50, $49.70
+
+**KO Price Targets**
+$51.50, $52.30
+
+**Stop out if KO closes BELOW:**
+$49
+
+**TWLO Support Levels: @here**
+$352, $338, $326
+
+**TWLO Price Targets**
+$366, $372, $383, $404
+
+**Stop out if TWLO closes BELOW:**
+$325
+
+**COST Support Levels: @here**
+$324, $317
+
+**COST Price Targets**
+$327, $331.50, $340
+
+**Stop out if COST closes BELOW:**
+$312
+
+**INMD Support Levels: @here** (higher risk trade)
+$71.25, $70, $67
+
+**INMD Price Targets**
+$73.80, $77.50, $82
+
+**Stop out if INMD closes BELOW:**
+$66 or $63 (depending on your risk levels)
+
+**SHOP Support Levels: @here**
+$1111, $1080, $1035
+
+**SHOP Price Targets**
+$1134, $1204, $1260, $1332, $1390
+
+**Stop out if SHOP closes BELOW:**
+$1020
+
+**PLTR Support Levels: @here**
+$23.30, $22.40, $21.30
+
+**PLTR Price Targets**
+$25, $26, $29
+
+**Stop out if PLTR closes BELOW:**
+$21
+
+**PYPL Support Levels: @here**
+$239, $234, $226
+
+**PYPL Price Targets**
+$243.40, $252, $256, $266
+
+**Stop out if PYPL closes BELOW:**
+$218
+
+**CLX Support Levels:** @here
+$181, $179
+
+**CLX Price Targets**
+$183.60, $189.60, $191.40, $199
+
+**Stop out if CLX closes BELOW:**
+$176
+
+**AYX Support Levels:** @here (ROUND 2)
+$84, $79.50, $90.50
+
+**AYX Price Targets**
+$93, 102, $109, $103.50
+
+**Stop out if AYX closes BELOW:**
+$76
+
+**LMT Support Levels**: @here
+$340, $333
+
+**LMT Price Targets**
+$344, $348, $350, $357
+
+**Stop out if LMT closes BELOW:**
+$332.50
+
+**MRK support levels:** @here
+$74.50 and $73.50
+
+**MRK Price Targets**
+$75.50, $76.50, $78
+
+**Stop out if MRK closes BELOW:**
+$73.50

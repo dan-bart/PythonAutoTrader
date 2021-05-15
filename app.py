@@ -1,18 +1,12 @@
 import trader
-import yfinance
-from flask_sqlalchemy import SQLAlchemy
-from flask import Flask, render_template, url_for
-from flask_bootstrap import Bootstrap
-from flask_table import Table, Col
-
-import bokeh.sampledata
+import yfinance as yf
+from flask import Flask, render_template
 import pandas as pd
-from bokeh.layouts import gridplot
-from bokeh.plotting import figure, output_file, show
-from bokeh.sampledata.stocks import AAPL, GOOG, IBM, MSFT
-from math import pi
+from bokeh.plotting import figure, show
+from bokeh.embed import components
+from bokeh.models import ColumnDataSource, HoverTool, NumeralTickFormatter
 import numpy as np
-
+import re
 
 
 sql_inst = trader.SQL()
@@ -20,116 +14,162 @@ app = Flask(__name__)
 
 #data from DB
 portfolio = sql_inst.fetch_all("portfolio")   
-trade_ideas = sql_inst.fetch_all("discord_trade_ideas")
+trade_ideas = sql_inst.fetch_all("trade_ideas")
 records = sql_inst.fetch_all("records")
+portfolio = portfolio.round(3)
+trade_ideas = trade_ideas.round(3)
+records = records.round(3)
 
-
-
-@app.route("/", methods=["GET"])
-@app.route("/home", methods=["GET"])
+@app.route("/")
+@app.route("/home")
 def home():
     return render_template('index.html.j2',page = '/home')
 
-@app.route("/<stock>", methods=["GET"])
-def stock_data(stock):
-    return stock
+@app.route("/portfolio/<stock_name>")
+def stock_data(stock_name):
+    records_stock = records.loc[records.ticker == stock_name]
+    p1 = candlestick_plot(stock_name, records_stock)
+    script, div = components(p1)
+    return render_template("plot.html.j2",page = '/portfolio', script = script, div = div)
 
 
 @app.route("/portfolio")
 def portfolio_fun():
-    df = pd.DataFrame(MSFT)[:50]
-    df["date"] = pd.to_datetime(df["date"])
-
-    inc = df.close > df.open
-    dec = df.open > df.close
-    w = 12*60*60*1000 # half day in ms
-
-    TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
-
-    p = figure(x_axis_type="datetime", tools=TOOLS, plot_width=1000, title = "MSFT Candlestick")
-    p.xaxis.major_label_orientation = pi/4
-    p.grid.grid_line_alpha=0.3
-
-    p.segment(df.date, df.high, df.date, df.low, color="black")
-    p.vbar(df.date[inc], w, df.open[inc], df.close[inc], fill_color="#D5E1DD", line_color="black")
-    p.vbar(df.date[dec], w, df.open[dec], df.close[dec], fill_color="#F2583E", line_color="black")
-    show(p)
-
-
-    kwargs = {'script': script, 'div': div}
-    kwargs['title'] = 'bokeh-with-flask' 
-
-    df_portfolio = portfolio.style.highlight_max(axis=0, subset=['avg_buy']).render()
-    
-
-    return render_template("df.html.j2", length=portfolio.shape[1], dataframe=df_portfolio,page = '/portfolio', **kwargs)
+    #html_df = re.sub(' mytable', '" id="mytable', portfolio.to_html(classes='mytable'))
+    final = portfolio.to_json(orient='records')
+    return render_template("df.html.j2",  dataframe=final)
 
 @app.route("/ideas")
 def ideas_fun():
-    return render_template("df.html.j2", length=trade_ideas.shape[1], dataframe=trade_ideas.to_html())
+    final = trade_ideas.to_json(orient='records')
+    return render_template("df_ideas.html.j2",  dataframe=final)
 
 @app.route("/records")
 def records_fun():
-    return render_template("df.html.j2", length=records.shape[1], dataframe=records.to_html())
+    final = records.to_json(orient='records',date_unit='ms')
+    return render_template("df_records.html.j2",  dataframe=final)
 
-@app.route("/dfcustom")
-def dfcustom():
-    data = portfolio.to_dict(orient="records")
-    headers = portfolio.columns
-    print(headers)
-    return render_template("dfcustom.html.j2", data=data, headers=headers)
+def candlestick_plot(stock_name, records):
+    df = yf.download(stock_name,period = '1y', interval="1h", prepost = False)
+    df['Date'] = df.index
+    df.reset_index(drop=True, inplace=True) 
+    df["Date"] = pd.to_datetime(df["Date"], format='%Y-%m-%d %H:%M:%S').dt.tz_localize(None)  # Adjust this
+    df["Date"] = df["Date"] + pd.DateOffset(hours=6)
+    records['date'] =  pd.to_datetime(records['date'], format = '%Y-%m-%d %H:%M:%S')
+    records['df_index'] = records['date'].apply(lambda x: np.argmax(df['Date']>x))
+
+    # Select the datetime format for the x axis depending on the timeframe
+    xaxis_dt_format = '%d %m %Y, %H:%M:%S'
+    fig = figure(sizing_mode='stretch_both',
+                 tools="xpan,xwheel_zoom,reset,save",
+                 active_drag='xpan',
+                 active_scroll='xwheel_zoom',
+                 x_axis_type='linear',
+                 #x_range=Range1d(df.index[0], df.index[-1], bounds="auto"),
+                 title=stock_name
+                 )
+    fig.yaxis[0].formatter = NumeralTickFormatter(format="$5.3f")
+    inc = df.Close > df.Open
+    dec = ~inc
+    # Colour scheme for increasing and descending candles
+    INCREASING_COLOR = 'green'
+    DECREASING_COLOR = 'red'
+
+    width = 0.5
+    inc_source = ColumnDataSource(data=dict(
+        x1=df.index[inc],
+        top1=df.Open[inc],
+        bottom1=df.Close[inc],
+        high1=df.High[inc],
+        low1=df.Low[inc],
+        Date1=df.Date[inc]
+    ))
+
+    dec_source = ColumnDataSource(data=dict(
+        x2=df.index[dec],
+        top2=df.Open[dec],
+        bottom2=df.Close[dec],
+        high2=df.High[dec],
+        low2=df.Low[dec],
+        Date2=df.Date[dec]
+    ))
+
+    records_source = ColumnDataSource(data=dict(
+        i1 = records.df_index,
+        d1=records.date,
+        p1 = records.price,
+        a1 = records.ammount
+    ))
+
+    # Plot candles
+    # High and low
+    print(records['date'])
+    print(df["Date"])
+
+    fig.segment(x0='x1', y0='high1', x1='x1', y1='low1', source=inc_source, color=INCREASING_COLOR)
+    fig.segment(x0='x2', y0='high2', x1='x2', y1='low2', source=dec_source, color=DECREASING_COLOR)
+
+
+    c1 = fig.circle(x = 'i1', y = 'p1', source=records_source, size=10)
+    # Open and close
+    r1 = fig.vbar(x='x1', width=width, top='top1', bottom='bottom1', source=inc_source,
+                    fill_color=INCREASING_COLOR, line_color="black")
+    r2 = fig.vbar(x='x2', width=width, top='top2', bottom='bottom2', source=dec_source,
+                    fill_color=DECREASING_COLOR, line_color="black")
+
+    # Add on extra lines (e.g. moving averages) here
+    # fig.line(df.index, <your data>)
+
+    # Add on a vertical line to indicate a trading signal here
+    # vline = Span(location=df.index[-<your index>, dimension='height',
+    #              line_color="green", line_width=2)
+    # fig.renderers.extend([vline])
+
+    # Add date labels to x axis
+    fig.xaxis.major_label_overrides = {
+        i: date.strftime(xaxis_dt_format) for i, date in enumerate(pd.to_datetime(df["Date"]))
+    }
+
+    #Set up the hover tooltip to display some useful data
+    fig.add_tools(HoverTool(
+        renderers=[c1],
+        tooltips=[
+            ("Ammount", "@a1"),
+            ("Price", "$@p1"),
+            ("Date", "@d1{" + xaxis_dt_format + "}"),
+        ],
+        formatters={
+            '@d1': 'datetime',
+        }))
 
 
 
-def datetime(x):
-    return np.array(x, dtype=np.datetime64)
+    fig.add_tools(HoverTool(
+        renderers=[r1],
+        tooltips=[
+            ("Open", "$@top1"),
+            ("High", "$@high1"),
+            ("Low", "$@low1"),
+            ("Close", "$@bottom1"),
+            ("Date", "@Date1{" + xaxis_dt_format + "}"),
+        ],
+        formatters={
+            '@Date1': 'datetime',
+        }))
 
-
-# @app.route("/bokehplot")
-# def bokehplot():
-#     figure = make_plot()
-#     fig_script, fig_div = components(figure)
-#     return render_template(
-#         "bokeh.html.j2",
-#         fig_script=fig_script,
-#         fig_div=fig_div,
-#         bkversion=bokeh.__version__,
-#     )
+    fig.add_tools(HoverTool(
+        renderers=[r2],
+        tooltips=[
+            ("Open", "$@top2"),
+            ("High", "$@high2"),
+            ("Low", "$@low2"),
+            ("Close", "$@bottom2"),
+            ("Date", "@Date2{" + xaxis_dt_format + "}")
+        ],
+        formatters={
+            '@Date2': 'datetime'
+        }))
+    return fig
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-def plot_stock(stock):
-    p1 = figure(x_axis_type="datetime", title="Stock Closing Prices")
-    p1.grid.grid_line_alpha=0.3
-    p1.xaxis.axis_label = 'Date'
-    p1.yaxis.axis_label = 'Price'
-    p1.line(x=datetime(AAPL['date']), y=AAPL['adj_close'], color='#A6CEE3', legend_label='AAPL')
-    p1.legend.location = "top_left"
-
-    aapl = np.array(AAPL['adj_close'])
-    print(AAPL['adj_close'])
-    print(datetime(AAPL['date']))
-    aapl_dates = np.array(AAPL['date'], dtype=np.datetime64)
-
-    window_size = 30
-    window = np.ones(window_size)/float(window_size)
-    aapl_avg = np.convolve(aapl, window, 'same')
-
-    p2 = figure(x_axis_type="datetime", title="AAPL One-Month Average")
-    p2.grid.grid_line_alpha = 0
-    p2.xaxis.axis_label = 'Date'
-    p2.yaxis.axis_label = 'Price'
-    p2.ygrid.band_fill_color = "olive"
-    p2.ygrid.band_fill_alpha = 0.1
-
-    p2.circle(x=aapl_dates, y=aapl, size=4, legend_label='close',
-            color='darkgrey', alpha=0.2)
-
-    p2.line(x=aapl_dates, y=aapl_avg, legend_label='avg', color='navy')
-    p2.legend.location = "top_left"
-
-    output_file("stocks.html", title="stocks.py example")
-
-    show(gridplot(children = [[p1,p2]], plot_width=400, plot_height=400))  # open a browser
