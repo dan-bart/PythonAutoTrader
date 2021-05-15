@@ -1,16 +1,16 @@
-import requests
-import json
 import pandas as pd
 import re
 from sqlalchemy import create_engine
-import sqlalchemy
-import maya
 import yfinance as yf
 import datetime as dt
 import time
 import psycopg2
-import warnings
 import schedule
+
+PSYCOPG2_CONNECTION = "dbname='stock_project' user='postgres' host='localhost' password='1234'"
+ENGINE_CONNECTION = 'postgresql://postgres:1234@localhost:5432/stock_project'
+FIRST_USE = False
+
 
 
 def message_parser(ideas):
@@ -77,9 +77,9 @@ class SQL:
         self.create_tables()
 
     def create_tables(self):
-        self.connection = psycopg2.connect("dbname='stock_project' user='postgres' host='localhost' password='1234'")
+        self.connection = psycopg2.connect(PSYCOPG2_CONNECTION)
         self.connection.autocommit = True 
-        self.engine = create_engine('postgresql://postgres:1234@localhost:5432/stock_project')
+        self.engine = create_engine(ENGINE_CONNECTION)
         self.cursor = self.connection.cursor()
 
         for sql_statement in [self.sql_create_trade_ideas, self.sql_create_portfolio, self.sql_create_records]:
@@ -303,9 +303,9 @@ def redo_ideas():
     for index, row in df_full.iterrows():
         sql_inst.write_trade_idea(row)
 
-def main():  
-    #redo_ideas()
-    warnings.simplefilter(action='ignore', category=FutureWarning)
+def main():
+    if FIRST_USE:  
+        redo_ideas()
     #start hourly trading
     while True:
         if (dt.datetime.now().time() >=dt.time(16,31)):
