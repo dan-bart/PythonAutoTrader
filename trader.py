@@ -142,7 +142,8 @@ class Trader():
             for i, row in pts.iterrows():
                 self.sql_inst.activate_level(row['ticker'],row['type'],row['price'],False)
             for i, row in supports.iterrows():
-                self.sql_inst.activate_level(row['ticker'],row['type'],row['price'],False)                
+                self.sql_inst.activate_level(row['ticker'],row['type'],row['price'],False)   
+            print([ticker,-owned,latestOpen,dt.datetime.now()])             
             return [ticker,-owned,latestOpen,dt.datetime.now()]
         return None
              
@@ -193,6 +194,9 @@ class Trader():
             # check if the level which the price action bounced of was actually the defined support
             #current price is very close to our support but hourly close is above the support -> buy
             if ((len(curr_lvl) != 0) and (last_hour['Low']+0.1>=curr_lvl['price']) and (last_hour['Low'] - curr_lvl['price']<0.5)  and last_hour['Close']>=curr_lvl['price']): 
+                print(last_hour['Low'])
+                print(curr_lvl['price'])
+                print(last_hour['Close'])
                 if(supports.loc[supports['price'] == curr_lvl['price'],'activated'].iloc[0] == False): 
                     supports.loc[supports['price'] == curr_lvl['price'],'activated'] = True
                     self.sql_inst.activate_level(ticker,curr_lvl['type'],curr_lvl['price'],True)
@@ -320,7 +324,7 @@ def main():
 
     #check closes below stop-outs
     while True:
-        if (dt.datetime.now().time() >=dt.time(21,8)):
+        if (dt.datetime.now().time() >=dt.time(21,58)):
             check_close()
             break
         time.sleep(10)

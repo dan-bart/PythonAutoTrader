@@ -2,11 +2,10 @@ import trader
 import yfinance as yf
 from flask import Flask, render_template
 import pandas as pd
-from bokeh.plotting import figure, show
+from bokeh.plotting import figure
 from bokeh.embed import components
-from bokeh.models import ColumnDataSource, HoverTool, NumeralTickFormatter
+from bokeh.models import ColumnDataSource, HoverTool, NumeralTickFormatter, Span
 import numpy as np
-import re
 
 
 sql_inst = trader.SQL()
@@ -28,7 +27,8 @@ def home():
 @app.route("/portfolio/<stock_name>")
 def stock_data(stock_name):
     records_stock = records.loc[records.ticker == stock_name]
-    p1 = candlestick_plot(stock_name, records_stock)
+    ideas_stock = trade_ideas.loc[trade_ideas.ticker == stock_name]
+    p1 = candlestick_plot(stock_name, records_stock,ideas_stock)
     script, div = components(p1)
     return render_template("plot.html.j2",page = '/portfolio', script = script, div = div)
 
@@ -49,7 +49,7 @@ def records_fun():
     final = records.to_json(orient='records',date_unit='ms')
     return render_template("df_records.html.j2",  dataframe=final)
 
-def candlestick_plot(stock_name, records):
+def candlestick_plot(stock_name, records, levels):
     df = yf.download(stock_name,period = '1y', interval="1h", prepost = False)
     df['Date'] = df.index
     df.reset_index(drop=True, inplace=True) 
@@ -57,7 +57,8 @@ def candlestick_plot(stock_name, records):
     df["Date"] = df["Date"] + pd.DateOffset(hours=6)
     records['date'] =  pd.to_datetime(records['date'], format = '%Y-%m-%d %H:%M:%S')
     records['df_index'] = records['date'].apply(lambda x: np.argmax(df['Date']>x))
-
+    records.loc[records['df_index'] == 0, "df_index"] = len(df)
+    print(records.df_index)
     # Select the datetime format for the x axis depending on the timeframe
     xaxis_dt_format = '%d %m %Y, %H:%M:%S'
     fig = figure(sizing_mode='stretch_both',
@@ -67,7 +68,7 @@ def candlestick_plot(stock_name, records):
                  x_axis_type='linear',
                  #x_range=Range1d(df.index[0], df.index[-1], bounds="auto"),
                  title=stock_name
-                 )
+                 )              
     fig.yaxis[0].formatter = NumeralTickFormatter(format="$5.3f")
     inc = df.Close > df.Open
     dec = ~inc
@@ -76,6 +77,15 @@ def candlestick_plot(stock_name, records):
     DECREASING_COLOR = 'red'
 
     width = 0.5
+
+    levels_source = ColumnDataSource(data=dict(
+        x1=levels.index,
+        price=levels.price,
+        type=levels.type,
+        activated=levels.activated,
+    ))
+
+
     inc_source = ColumnDataSource(data=dict(
         x1=df.index[inc],
         top1=df.Open[inc],
@@ -108,6 +118,17 @@ def candlestick_plot(stock_name, records):
 
     fig.segment(x0='x1', y0='high1', x1='x1', y1='low1', source=inc_source, color=INCREASING_COLOR)
     fig.segment(x0='x2', y0='high2', x1='x2', y1='low2', source=dec_source, color=DECREASING_COLOR)
+    lines = []
+    for i,r in levels.iterrows():
+        print(r)
+        if(r['type'] == 'pt'):
+            hline = Span(location=r['price'], dimension='width', line_color='green', line_width=1)
+        elif(r['type'] == 'support'):
+            hline = Span(location=r['price'], dimension='width', line_color='orange', line_width=1)
+        elif(r['type'] == 'stop'):
+            hline = Span(location=r['price'], dimension='width', line_color='red', line_width=1)
+        lines.append(hline)
+    fig.renderers.extend(lines)
 
 
     c1 = fig.circle(x = 'i1', y = 'p1', source=records_source, size=10)
