@@ -27,8 +27,7 @@ Using a simulated portfolio (not connected to any real broker)
 5. Run flask app (https://flask.palletsprojects.com/en/2.0.x/quickstart/)
 
 ## Future extensions
-- Run trader.py with cloud service
+- Run trader.py with cloud service (AWS)
 - Create script to define own supports/price targets (via commonly used trading metrics: moving averages, trendlines..)
-- Extend to crypto
-
+- Connect to real broker
 
