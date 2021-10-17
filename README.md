@@ -1,12 +1,12 @@
 # PythonAutoTrader
-Automatic Stock Trader using predefined Supports and Price Targets, running on PostgreSQL, visualized with Flask.
+Automatic Stock trading simulation using predefined Supports and Price Targets, running on PostgreSQL, visualized with Flask.
 I used this project to get familiar with SQL, Flask (alternative to Django) and CSS/HTML.
 Using a simulated portfolio (not connected to any real broker)
 
 ## Contents:
 
 - **ideas.txt**
-    - Text file containing price targets, supports and stop-out for selected stocks. Parsed with **trader.py**
+    - Text file containing price targets, supports and stop-outs for selected stocks. Parsed with **trader.py**
 
 -  **trader.py** 
     - Checks hourly stock closes after each hour of trading, and sells/buys, if the price appears near predefined supports/price targets.
@@ -29,5 +29,4 @@ Using a simulated portfolio (not connected to any real broker)
 ## Future extensions
 - Run trader.py with cloud service (AWS)
 - Create script to define own supports/price targets (via commonly used trading metrics: moving averages, trendlines..)
-- Connect to real broker
 
